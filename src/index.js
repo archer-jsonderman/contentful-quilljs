@@ -7,7 +7,9 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "./index.scss"
 
-
+const initFormat = {
+    content:''
+}
 class App extends React.Component {
   static propTypes = {
     sdk: PropTypes.object.isRequired
@@ -15,15 +17,14 @@ class App extends React.Component {
 constructor(props){
 	super(props)
 	this.state=this.props.sdk.field.getValue();
+	if(!this.state)this.state=initFormat;
+	//console.log(this.state)
 
 }
   
 
   componentDidMount() {
     this.props.sdk.window.startAutoResizer()
-    console.log(this.state)
-	// Handler for external field value changes (e.g. when multiple authors are working on the same entry).
-    //this.detachExternalChangeHandler = this.props.sdk.field.onValueChanged(this.onExternalChange)
 
   }
   componentWillUnmount() {
@@ -31,24 +32,27 @@ constructor(props){
     //this.detachExternalChangeHandler()
   }
   
-   handleStateChange =(newState)=>{
+   handleStateChange =(value, delta, source, editor)=>{
+	   
+	   
 	   const updatedState = update(
 		   this.state,{
-			   $set:newState
+			   content:{$set:editor.getHTML()}
 		   }
 	   )	  
 	   this.setState(updatedState,this.saveValues)
 	   
    }
   saveValues=()=>{
-	  console.log(this.state,' saving')
+	  //console.log(this.state,' saving')
 	  this.props.sdk.field.setValue(this.state);
-	  console.log(this.props.sdk.field.getValue(),' save to field')
+	  //console.log(this.props.sdk.field.getValue(),' save to field')
   }
    onExternalChange = value => {
     //this.setState({ value })
   }
   modules = {
+	  clipboard:{matchVisual:false},
 		toolbar: [
 			['bold', 'italic', {'script':'super'},'blockquote'],
 			[{'size':['small',false]}],
@@ -57,12 +61,13 @@ constructor(props){
 		    ],
 	  }
   render(){
+	  const {content} = this.state||'';
       return ( 
 	     <ReactQuill 
 	  		name="content"
-	  		value={this.state}
+	  		value={content}
 	  		placeholder="Add your content..."
-	  		onChange={(value)=>this.handleStateChange(value)} 
+	  		onChange={this.handleStateChange} 
 	  		modules={this.modules}
 	  		theme='snow'
 	  		/>

@@ -50220,27 +50220,35 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const initFormat = {
+  content: ''
+};
+
 class App extends _react.default.Component {
   constructor(props) {
     super(props);
 
-    this.handleStateChange = newState => {
+    this.handleStateChange = (value, delta, source, editor) => {
       const updatedState = (0, _immutabilityHelper.default)(this.state, {
-        $set: newState
+        content: {
+          $set: editor.getHTML()
+        }
       });
       this.setState(updatedState, this.saveValues);
     };
 
     this.saveValues = () => {
-      console.log(this.state, ' saving');
-      this.props.sdk.field.setValue(this.state);
-      console.log(this.props.sdk.field.getValue(), ' save to field');
+      //console.log(this.state,' saving')
+      this.props.sdk.field.setValue(this.state); //console.log(this.props.sdk.field.getValue(),' save to field')
     };
 
     this.onExternalChange = value => {//this.setState({ value })
     };
 
     this.modules = {
+      clipboard: {
+        matchVisual: false
+      },
       toolbar: [['bold', 'italic', {
         'script': 'super'
       }, 'blockquote'], [{
@@ -50252,12 +50260,11 @@ class App extends _react.default.Component {
       }], ['clean']]
     };
     this.state = this.props.sdk.field.getValue();
+    if (!this.state) this.state = initFormat; //console.log(this.state)
   }
 
   componentDidMount() {
     this.props.sdk.window.startAutoResizer();
-    console.log(this.state); // Handler for external field value changes (e.g. when multiple authors are working on the same entry).
-    //this.detachExternalChangeHandler = this.props.sdk.field.onValueChanged(this.onExternalChange)
   }
 
   componentWillUnmount() {//need to add this or onExternal Change will keep nesting value objects in state
@@ -50265,11 +50272,14 @@ class App extends _react.default.Component {
   }
 
   render() {
+    const {
+      content
+    } = this.state || '';
     return _react.default.createElement(_reactQuill.default, {
       name: "content",
-      value: this.state,
+      value: content,
       placeholder: "Add your content...",
-      onChange: value => this.handleStateChange(value),
+      onChange: this.handleStateChange,
       modules: this.modules,
       theme: "snow"
     });
@@ -50317,7 +50327,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64953" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54384" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

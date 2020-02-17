@@ -4,6 +4,6 @@
   "srcdoc": "./build/index.html",
   "sidebar":false,
   "fieldTypes": [
-      "Text"
+      "Object"
   ]
 }
