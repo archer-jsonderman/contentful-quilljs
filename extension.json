@@ -1,0 +1,9 @@
+{
+  "id": "contentful-quilljs",
+  "name": "Quill JS",
+  "srcdoc": "./build/index.html",
+  "sidebar":false,
+  "fieldTypes": [
+      "Text"
+  ]
+}
