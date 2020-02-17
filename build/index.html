@@ -1,46 +1,49 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-        <link rel="stylesheet" href="https://contentful.github.io/ui-extensions-sdk/cf-extension.css">
-    <!-- load Contentful extensions SDK -->
-    <script src="https://unpkg.com/contentful-ui-extensions-sdk@3"></script>
-  <link rel="stylesheet" href="/src.e31bb0bc.css"></head>
-  <body>
+<!doctype html>
+<html lang="en">
 
-	
-    <div id="root">
-	    
-    </div>
-    <script type="text/javascript" src="/src.e31bb0bc.js"></script>
-    <script>function charcountupdate(str, maxCount) {
-  var lng = str.length;
-  var countField = document.createElement('div');
-  countField.innerHTML = '<span></span><span></span>';
-  countField.classList.add('css-1wuc616');
-  countField.setAttribute('id', 'charcount');
-  document.querySelector('.css-1ogakd7').appendChild(countField);
-  var charCount = document.getElementById("charcount");
+<head>
+	<meta charset="UTF-8">
+	<title>Quill WYSIWYG Editor</title>
+	<!-- Contentful's default styles -->
+	<link rel="stylesheet" href="https://contentful.github.io/ui-extensions-sdk/cf-extension.css">
+	<!-- UI Extensions SDK -->
+	<script src="https://contentful.github.io/ui-extensions-sdk/cf-extension-api.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.5/quill.snow.min.css">
 
-  if (maxCount) {
-    charCount.firstChild.innerHTML = lng + ' out of ' + maxCount + ' characters';
-    charCount.lastChild.innerHTML = "Requires less than " + maxCount + " characters";
-  }
-}
+</head>
 
-window.contentfulExtension.init(function (extension) {
-  //TODO build this in react into index.js   
-  const entryField = extension.entry.fields.heroHeadline;
-  const storedValue = entryField.getValue();
-  const uiField = document.getElementById('hero_headline');
-  !storedValue || storedValue == '' ? uiField.value = '' : uiField.value = storedValue; //make sure our field doesn't display 'undefined' string on first load
-  //charcountupdate(storedValue);
+<body style="min-height:200px">
 
-  uiField.addEventListener('change', event => {
-    console.log(event.target.value);
-    entryField.setValue(event.target.value);
-    console.log(entryField.getValue());
+	<!-- Create the editor container -->
+	<div id="editor">
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.5/quill.min.js"></script>
+	<script>window.contentfulExtension.init(function (extension) {
+  extension.window.startAutoResizer();
+  var quillElement = document.getElementById("editor");
+  var quillToolbarOptions = [['bold', 'italic', {
+    'script': 'super'
+  }], [{
+    'list': 'ordered'
+  }, {
+    'list': 'bullet'
+  }], ['clean']];
+  var quillEditor = new Quill(quillElement, {
+    modules: {
+      toolbar: quillToolbarOptions
+    },
+    theme: "snow",
+    formats: ['bold', 'italic', {
+      'script': 'super'
+    }]
+  });
+  var currentValue = extension.field.getValue() || "";
+  quillElement.firstChild.innerHTML = currentValue;
+  quillEditor.on("text-change", function (delta, oldDelta, source) {
+    var value = quillElement.firstChild.innerHTML;
+    extension.field.setValue(value);
   });
 });</script>
-  </body>
+</body>
+
 </html>
